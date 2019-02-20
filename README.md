@@ -3,6 +3,7 @@ neotoma
 
 [![Build Status](https://api.travis-ci.org/ropensci/neotoma.png)](https://travis-ci.org/ropensci/neotoma)
 [![Build status](https://ci.appveyor.com/api/projects/status/t2xyqbs0d8h998cb/branch/master)](https://ci.appveyor.com/project/sckott/neotoma/branch/master)
+[![codecov.io](https://codecov.io/github/ropensci/neotoma/coverage.svg?branch=master)](https://codecov.io/github/ropensci/neotoma?branch=master)
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/neotoma)](https://github.com/metacran/cranlogs.app)
 [![cran version](http://www.r-pkg.org/badges/version/neotoma)](https://cran.r-project.org/package=neotoma)
 
@@ -13,6 +14,8 @@ The `neotoma` package is a programmatic R interface to the [Neotoma Paleoecologi
 For more information on the package please refer to: 
 
 Goring, S., Dawson, A., Simpson, G. L., Ram, K., Graham, R. W., Grimm, E. C., & Williams, J. W.. (2015). neotoma: A Programmatic Interface to the Neotoma Paleoecological Database. *Open Quaternary*, 1(1), Art. 2. DOI: [10.5334/oq.ab](http://doi.org/10.5334/oq.ab)
+
+For ongoing news, issues or information please join the [Neotoma Slack server](https://bit.ly/2FrZyYD) (and add the #r channel).  [Slack](http://www.slack.com/) is a real time chat application and collaboration hub with mobile and desktop applications.
 
 ### Development
 
@@ -28,7 +31,7 @@ Goring, S., Dawson, A., Simpson, G. L., Ram, K., Graham, R. W., Grimm, E. C., & 
 
 Package functions resolve various Neotoma APIs and re-form the data returned by the Neotoma database into R data objects.  The format of the Neotoma data, and the actual API functions can be accessed on the Neotoma API [website](http://api.neotomadb.org/doc/resources/home).
 
-If you have used the package please consider providing us feedback through a [short survey](https://docs.google.com/forms/d/1NFKtmP43_b56S8AUZnrzYfJqWSDnDuXQr7rhIYKRkt0/viewform).
+If you have used the package please consider providing us feedback through a [short survey](https://docs.google.com/forms/d/e/1FAIpQLSdRNat6L9grRF0xU5gibkr26xq9jD9wyHgw_AWxhrgn0lWv7w/viewform).
 
 ### Install `neotoma`
 
@@ -60,13 +63,20 @@ More functions are available through the package help.  These represent the core
 + `get_chroncontrol` - Get chronological information used to build the age-depth model for the record. [API](http://api.neotomadb.org/doc/resources/chroncontrol)
 
 ### Recent Changes
-+ 1.6.0: Support for vector inputs in the `gpid` selection. Added a `get_closest` function to find the closest sample site. Mostly clean-up of reported bugs by users. Revised examples for faster check speed.
-+ 1.5.1: Minor fix to the `get_dataset` for site level data to account for some datasets with empty submission data.  Some style changes to code (non-functional changes)
-+ 1.5.0: More extensive testing to support multiple dataset types.  Water chemistry datasets still unsupported. Function `read.tilia` added to read Tilia (http://tiliait.com) style XML files. Moved to using `xml2`, `httr` and `jsonlite` to support parsing.
-+ 1.4.1: Small changes to `get_geochron` to address bug reports and improve object `printing` methods.
-+ 1.4.0: Added `plot` method for datasets, sites & downloads.  Fixed a bug with records missing chronologies.
++ 1.7.4: Bug fix: `get_dataset(gpid=123)` was returning an error, fix corrects the error to allow unassigned `x` variables.  Updated the allowable dataset types for searching to reflect the larger set of dataset types within Neotoma.
++ 1.7.3: Added numeric/integer methods to the `get_site()` and `get_dataset()` functions so that a vector of dataset or siteids can be passed to improve more general workflow methods.
++ 1.7.2: Bugfixes, added the `taxa()` function to easily extract taxa from one or multiple download objects.
++ 1.7.1: Bugfix for `compile_download()`, single sample downloads were failing to compile properly, added the `taxa()` function to extract taxa lists from large download objects.
++ 1.7.0: Added `plot_leaflet()` to allow interactive exploration of downloaded Neotoma data.  Integrates with the Neotoma Explorer.  Minor bugfix for `get_download()` to allow records to be sent to Neotoma and to be filtered.
++ 1.6.2: Improved the basic `plot()` method based on tests against Tilia files in the Neotoma Holding Tank & built more robust interpolation in `read_bacon()` so that age models without interpolated dates can still be imported. `browse()` now opens multiple datastes in the Neotoma Explorer at once.
++ 1.6.1: New `Stratiplot()` method, using the `analogue` package to plot dataset diagrams from `download` and `download_list` objects, bug fixes for `write_agefile()` and a new function, `read_bacon()`, to read in and integrate Bacon chronologies into `download` objects.
++ 1.6.0: Support for vector inputs in the `gpid` selection. Added a `get_closest()` function to find the closest sample site. Mostly clean-up of reported bugs by users. Revised examples for faster check speed.
++ 1.5.1: Minor fix to the `get_dataset()` for site level data to account for some datasets with empty submission data.  Some style changes to code (non-functional changes)
++ 1.5.0: More extensive testing to support multiple dataset types.  Water chemistry datasets still unsupported. Function `read.tilia()` added to read Tilia (http://tiliait.com) style XML files. Moved to using `xml2`, `httr` and `jsonlite` to support parsing.
++ 1.4.1: Small changes to `get_geochron()` to address bug reports and improve object `print` methods.
++ 1.4.0: Added `plot()` method for datasets, sites & downloads.  Fixed a bug with records missing chronologies.
 
-### A few examples
+### A few examples:
 
 #### Find the distribution of sites with Mammoth fossils in Neotoma
 
@@ -132,7 +142,25 @@ Found at [this gist](https://gist.github.com/SimonGoring/718a654f304f2d16ce4b)
 
 Found at [this gist](https://gist.github.com/SimonGoring/877dd71cc3ad6bf8531e).  Prepared in part for a Bacon (Blaauw & Christen, 2011) workshop at the 2015 International Limnogeology Conference in Reno-Tahoe, Nevada led by Amy Myrbo (University of Minnesota).
 
-###
----
+#### Simple paleo-data visualization
 
-[![](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
+Simple paleo-data visualization in R, linking the `rioja`, `neotoma` and `dplyr` packages.  Found at [this gist](https://gist.github.com/SimonGoring/dbb4c8e0087882dc143baa89fa041d2b).
+
+![gif](inst/img/inkspot_neotoma.gif)
+
+#### Find all site elevations in California:
+
+Found at [Simon Goring's gist.](https://gist.github.com/SimonGoring/6a2ba1d55a3a7f78723b37e896b55b70).
+
+#### Match all Neotoma taxa to external databases using `taxize`:
+
+Found at [Simon Goring's gist.](https://gist.github.com/SimonGoring/24fb1228204f768f3f0020f37060db18).
+
+#### Other Resources Using `neotoma`
+
+*  [A simple `neotoma` workshop](http://www.goring.org/resources/Neotoma_Lesson.html)
+*  [Data exploration and chronologies with `neotoma`](http://www.goring.org/resources/neotoma_lab_meeting.html)
+
+### `neotoma` Workshops
+
+We have provided a set of educational tools through the [NeotomaDB](http://github.com/neotomaDB) GitHub repository in the [Workshops](http://github.com/NeotomaDB/Workshops) repository.  These are free to share, and can be modified as needed.

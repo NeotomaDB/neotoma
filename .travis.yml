@@ -1,4 +1,17 @@
 language: r
+sudo: false
+cache: packages
+
+env:
+  - NOT_CRAN=true
+
+apt_packages: libudunits2-dev
+
+r_github_packages:
+  - jimhester/covr
+
+after_success:
+- Rscript -e 'covr::codecov()'
 
 notifications:
   slack:

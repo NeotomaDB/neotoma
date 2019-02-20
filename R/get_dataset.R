@@ -4,11 +4,11 @@
 #' @importFrom jsonlite fromJSON
 #' @importFrom httr content GET
 #' @param x An optional value, either a \code{numeric} site ID or object of class \code{download}, \code{download_list} or \code{site}.
-#' @param datasettype A character string corresponding to one of the allowed dataset types in the Neotoma Database.  Allowed types include: \code{"geochronologic"}, \code{"loss-on-ignition"}, \code{"pollen"}, \code{"plant macrofossils"}, \code{"vertebrate fauna"}, \code{"mollusks"}, and \code{"pollen surface sample"}.
+#' @param datasettype A character string corresponding to one of the allowed dataset types in the Neotoma Database.  Allowed types include: \code{"geochronologic"}, \code{"loss-on-ignition"}, \code{"pollen"}, \code{"plant macrofossils"}, \code{"vertebrate fauna"}, \code{"mollusks"}, and \code{"pollen surface sample"}.  See note in Details delow.
 #' @param piid Numeric value for the Principle Investigator's ID number.
 #' @param altmin Numeric value indicating the minimum altitude for the site (can be used alone or with \code{altmax}).
 #' @param altmax Numeric value indicating the maximum altitude for the site (can be used alone or with \code{altmin}).
-#' @param loc A numeric vector \code{c(lonW, latS, lonE, latN)} representing the bounding box within which to search for sites.  The convention here is to use negative values for longitudes west of Grewnwich or longitudes south of the equator
+#' @param loc A numeric vector \code{c(lonW, latS, lonE, latN)} representing the bounding box within which to search for sites.  The convention here is to use negative values for longitudes west of Greenwich or longitudes south of the equator
 #' @param gpid A character string or numeric value, must correspond to a valid geopolitical identity in the Neotoma Database.  Use get.tables('GeoPoliticalUnits') for a list of acceptable values, or link here: \url{http://api.neotomadb.org/apdx/geopol.htm}
 #' @param taxonids A numeric identifier for the taxon.  See \code{\link{get_table}} and use \code{get_tables('Taxa')} for a list of acceptable values.
 #' @param taxonname A character string corresponding to a valid taxon identity in the Neotoma Database.  See \code{\link{get_table}} and use \code{get_table('Taxa')} for a list of acceptable values.
@@ -18,6 +18,7 @@
 #' @param subdate Date of dataset submission, either YYYY-MM-DD or MM-DD-YYYY.
 #'
 #' @author Simon J. Goring \email{simon.j.goring@@gmail.com}
+#' @details With regards to \code{datasettypes}, because Neotoma is a "living" database, and new dataset types are being added in an ongoing manner as new research disciplines use the database, you can use \code{get_tables("datasettypes")} to see the full list of available dataset types in the database.
 #' @return More details on the use of these parameters can be obtained from
 #'    \url{http://api.neotomadb.org/doc/resources/datasets}.
 #'
@@ -33,20 +34,24 @@
 #'  \item{ \code{DatasetType}  }{The dataset type, such as: geochronologic, loss-on-ignition, pollen, plant macrofossils, vertebrate fauna, etc.}
 #'  \item{ \code{AgeOldest}  }{The oldest of all sample ages (in calendar years before present) in the dataset.}
 #'  \item{ \code{AgeYoungest}  }{The youngest of all sample ages (in calendar years before present) in the dataset.}
-#'  \item{ \code{SubDates}  }{An array of objects that describe dataset submission events.  If multiple submissions occured then this is a table.}
+#'  \item{ \code{SubDates}  }{An array of objects that describe dataset submission events.  If multiple submissions occurred then this is a table.}
 #'  \item{ \code{DatasetPIs}  }{An array of objects that describe Principal Investigators associated with a dataset.}
 #'  \item{ \code{Site}  }{An object describing the site where the dataset samples were taken.}
 #'
 #' @examples \dontrun{
 #' # Search for sites with "Thuja" pollen that are older than 8kyr BP and
 #' # that are on the west coast of North America:
-#' t8kyr.datasets <- get_dataset(taxonname='Thuja*', loc=c(-150, 20, -100, 60), ageyoung = 8000)
+#' t8kyr.datasets <- get_dataset(taxonname='Thuja*', 
+#'                               loc=c(-150, 20, -100, 60), 
+#'                               ageyoung = 8000)
 #'
 #' # Search for vertebrate fossils in Canada (gpid: 756) within the last 2kyr.
 #' gpids <- get_table(table.name='GeoPoliticalUnits')
 #' canID <- gpids[which(gpids$GeoPoliticalName == 'Canada'),1]
 #'
-#' v2kyr.datasets <- get_dataset(datasettype='vertebrate fauna', gpid=canID, ageold = 2000)
+#' v2kyr.datasets <- get_dataset(datasettype='vertebrate fauna', 
+#'                               gpid=canID, 
+#'                               ageold = 2000)
 #' }
 #' @references
 #' Neotoma Project Website: http://www.neotomadb.org
@@ -68,7 +73,7 @@ get_dataset <- function(x, datasettype, piid, altmin, altmax, loc, gpid, taxonid
 #' @param piid Numeric value for the Principle Investigator's ID number.
 #' @param altmin Numeric value indicating the minimum altitude for the site (can be used alone or with \code{altmax}).
 #' @param altmax Numeric value indicating the maximum altitude for the site (can be used alone or with \code{altmin}).
-#' @param loc A numeric vector \code{c(lonW, latS, lonE, latN)} representing the bounding box within which to search for sites.  The convention here is to use negative values for longitudes west of Grewnwich or longitudes south of the equator
+#' @param loc A numeric vector \code{c(lonW, latS, lonE, latN)} representing the bounding box within which to search for sites.  The convention here is to use negative values for longitudes west of Greenwich or longitudes south of the equator
 #' @param gpid A character string or numeric value, must correspond to a valid geopolitical identity in the Neotoma Database.  Use get.tables('GeoPoliticalUnits') for a list of acceptable values, or link here: \url{http://api.neotomadb.org/apdx/geopol.htm}
 #' @param taxonids A numeric identifier for the taxon.  See \code{\link{get_table}} and use \code{get_tables('Taxa')} for a list of acceptable values.
 #' @param taxonname A character string corresponding to a valid taxon identity in the Neotoma Database.  See \code{\link{get_table}} and use \code{get_table('Taxa')} for a list of acceptable values.
@@ -99,7 +104,7 @@ get_dataset.default <- function(x, datasettype, piid, altmin, altmax, loc, gpid,
     cl <- error_test[[1]]
   }
   
-  cl <- lapply(cl, function(x){ if (length(x) > 1) {paste0(x, collapse=',')} else {x} })
+  cl <- lapply(cl, function(x){ if (length(x) > 1) {paste0(x, collapse = ',')} else {x} })
 
   neotoma_content <- httr::content(httr::GET(base.uri, query = cl), as = "text")
   if (identical(neotoma_content, "")) stop("")
@@ -226,12 +231,26 @@ get_dataset.site <- function(x, ...) {
     }
   }
   
-  
-  pull_site <- function(siteid) {
+  pull_site <- function(siteid, ...) {
+    
+    cl <- as.list(match.call())
+    cl[[1]] <- NULL
+    cl <- lapply(cl, eval, envir = parent.frame())
+    
+    #  Pass the parameters to param_check to make sure everything is kosher.
+    error_test <- param_check(cl)
+    if (error_test[[2]]$flag == 1) {
+      stop(paste0(unlist(error_test[[2]]$message), collapse = '\n  '))
+    } else {
+      cl <- error_test[[1]]
+    }
+    
+    cl <- lapply(cl, function(x){ if (length(x) > 1) {paste0(x, collapse = ',')} else {x} })
     
     base.uri <- 'http://api.neotomadb.org/v1/data/datasets/?siteid='
     
-    neotoma_content <- httr::content(httr::GET(paste0(base.uri, siteid)), as = "text")
+    neotoma_content <- httr::content(httr::GET(base.uri, query = cl), as = "text")
+    
     if (identical(neotoma_content, "")) stop("")
     aa <- jsonlite::fromJSON(neotoma_content, simplifyVector = FALSE)
 
@@ -285,7 +304,7 @@ get_dataset.site <- function(x, ...) {
         rownames(new.output$pi.data) <- NULL
       }
       
-      sub.test <- try(do.call(rbind.data.frame, x$SubDates), silent=TRUE)
+      sub.test <- try(do.call(rbind.data.frame, x$SubDates), silent = TRUE)
 
       if (length(sub.test) > 0 & !"try-error" %in% class(sub.test)) {
         colnames(sub.test) <- c("SubmissionDate",  "SubmissionType")
@@ -303,8 +322,8 @@ get_dataset.site <- function(x, ...) {
 
     new.output
   }
-
-  new.output <- unlist(lapply(x$site.id,pull_site), recursive=FALSE)
+  
+  new.output <- unlist(lapply(x$site.id, function(x){pull_site(siteid = x, ...)}), recursive = FALSE)
   
   class(new.output) <- c('dataset_list', 'list')
   
@@ -339,7 +358,7 @@ get_dataset.download <- function(x, ...) {
 get_dataset.download_list <- function(x, ...) {
 
   # Just pull the dataset out of the download and reassign classes:
-  output <- lapply(x, FUN=function(y) {
+  output <- lapply(x, FUN = function(y) {
     dataset <- y$dataset
     class(dataset) <- c('dataset', 'list')
     dataset })
@@ -371,4 +390,128 @@ get_dataset.geochronologic_list <- function(x, ...) {
   out <- lapply(x, function(y)y[[1]])
   class(out) <- c('dataset_list', 'list')
   out
+}
+
+#' @title Obtain dataset information from a vector of dataset IDs.
+#' @description A function to access the Neotoma API and return datasets corresponding to the parameters defined by the user.
+#'
+#' @param x A single numeric dataset id, or a numeric vector.
+#' @param ... objects passed from the generic.  Not used in the call.
+#' @export
+get_dataset.numeric <- function(x = NULL, ...) {
+  
+  if (is.null(x)) {
+    return(get_dataset.default(...))
+  }
+  
+  rep_NULL <- function(x) { 
+    if (is.null(x) | length(x) == 0) {NA}
+    else{
+      if (class(x) == 'list') {
+        lapply(x, rep_NULL)
+      } else {
+        return(x)
+      }
+    }
+  }
+  
+  pull_datasets <- function(x) {
+
+    #  Pass the parameters to param_check to make sure everything is kosher.
+
+    base.uri <- paste0('http://api.neotomadb.org/v1/data/datasets/', x)
+    
+    neotoma_content <- httr::content(httr::GET(base.uri), as = "text")
+    
+    if (identical(neotoma_content, "")) stop("")
+    aa <- jsonlite::fromJSON(neotoma_content, simplifyVector = FALSE)
+    
+    if (aa[[1]] == 0) {
+      stop(paste('Server returned an error message:\n', aa[[2]]), call. = FALSE)
+    }
+    if (aa[[1]] == 1) {
+      output <- aa[[2]]
+      # replace NULL values:
+      
+    }
+    
+    if (length(output) == 0) {
+      warning('The criteria used returned 0 sample sites. Returning NULL.')
+      return(NULL)
+    }
+    
+    new.output <- lapply(output, function(x) {
+      new.output <- list()
+      
+      x <- rep_NULL(x)
+      
+      new.output$site.data <- data.frame(site.id = x$Site$SiteID,
+                                         site.name = x$Site$SiteName,
+                                         long = mean(unlist(x$Site[c('LongitudeWest', 'LongitudeEast')]),
+                                                     na.rm = TRUE),
+                                         lat = mean(unlist(x$Site[c('LatitudeNorth', 'LatitudeSouth')]),
+                                                    na.rm = TRUE),
+                                         elev = x$Site$Altitude,
+                                         description = x$Site$SiteDescription,
+                                         long.acc = abs(x$Site$LongitudeWest - x$Site$LongitudeEast),
+                                         lat.acc = abs(x$Site$LatitudeNorth - x$Site$LatitudeSouth),
+                                         row.names = x$Site$SiteName,
+                                         stringsAsFactors = FALSE)
+      
+      new.output$dataset.meta <- data.frame(dataset.id = ifelse(class(x$DatasetID) == 'logical',
+                                                                NA, x$DatasetID),
+                                            dataset.name = ifelse(class(x$DatasetName) == 'logical',
+                                                                  NA, x$DatasetName),
+                                            collection.type = ifelse(class(x$CollUnitType) == 'logical',
+                                                                     NA, x$CollUnitType),
+                                            collection.handle = ifelse(class(x$CollUnitHandle) == 'logical',
+                                                                       NA, x$CollUnitHandle),
+                                            dataset.type = ifelse(class(x$DatasetType) == 'logical',
+                                                                  NA, x$DatasetType),
+                                            stringsAsFactors = FALSE)
+      if (class(x$DatasetPIs) == 'logical') { 
+        new.output$pi.data <- NA
+      } else {
+        new.output$pi.data <- do.call(rbind.data.frame, x$DatasetPIs)
+        rownames(new.output$pi.data) <- NULL
+      }
+      
+      sub.test <- try(do.call(rbind.data.frame, x$SubDates), silent = TRUE)
+      
+      if (length(sub.test) > 0 & !"try-error" %in% class(sub.test)) {
+        colnames(sub.test) <- c("SubmissionDate",  "SubmissionType")
+      } else {
+        sub.test <- data.frame(SubmissionDate = NA, SubmissionType = NA)
+      }
+      
+      new.output$submission <- sub.test
+      
+      new.output$access.date = Sys.time()
+      
+      class(new.output) <- c('dataset', 'list')
+      
+      new.output})
+    
+    new.output
+  }
+  
+  new.output <- unlist(lapply(x, function(x){pull_datasets(x)}), recursive = FALSE)
+  
+  class(new.output) <- c('dataset_list', 'list')
+
+  new.output
+}
+
+#' @title Obtain dataset information from a vector of dataset IDs.
+#' @description A function to access the Neotoma API and return datasets corresponding to the parameters defined by the user.
+#'
+#' @param x A single numeric dataset id, or a numeric vector.
+#' @param ... objects passed from the generic.  Not used in the call.
+#' @export
+get_dataset.integer <- function(x = NULL, ...) {
+  if (is.null(x)) {
+    return(get_dataset.default(...))
+  } else {
+    return(get_dataset(as.numeric(x)))
+  }
 }
