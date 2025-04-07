@@ -1,3 +1,9 @@
+<!-- badges: start -->
+
+[![lifecycle](https://img.shields.io/badge/lifecycle-deprecated-orange.svg)](https://github.com/NeotomaDB/neotoma2)
+
+<!-- badges: end -->
+
 neotoma
 ========
 
